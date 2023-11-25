@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "Montserrat";
+  src: url("assets/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
+}
+$bg-primary: rgb(20, 25, 31);
+$active: rgb(244, 18, 64);
+@keyframes slidein {
+  from {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
