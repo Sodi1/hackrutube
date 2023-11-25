@@ -1,0 +1,42 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rutube_production
+    volumes:
+      - rutube_db_pg_data:/var/lib/postgresql/data
+  web:
+    build: .
+    environment:
+      - SECRET_KEY_BASE=123
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=rutube_production
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - rutube_elastic_data:/usr/share/elasticsearch/data
+volumes:
+  rutube_db_pg_data:
+  rutube_elastic_data:

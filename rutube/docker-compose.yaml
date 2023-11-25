@@ -1,0 +1,62 @@
+version: '3'
+services:
+  web:
+    image: vchekryzhov/rutube-search:v14
+    build: .
+    environment:
+      - SECRET_KEY_BASE=123
+      - DB_HOST=host.docker.internal
+      - DB_USER=postgres
+      - DB_PASSWORD=example
+      - DB_NAME=rutube_production
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - REDIS_URL_SIDEKIQ=redis://redis:6379/1
+    ports:
+      - "3001:3000"
+    depends_on:
+      - elasticsearch
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - rutube_elastic_data:/usr/share/elasticsearch/data
+  redis:
+    image: 'redis:7-alpine'
+    command: redis-server
+    volumes:
+      - 'redis:/data'
+  sidekiq:
+    image: vchekryzhov/rutube-search:v14
+    depends_on:
+      - 'redis'
+    command: bundle exec sidekiq
+    environment:
+      - REDIS_URL_SIDEKIQ=redis://redis:6379/1
+      - SECRET_KEY_BASE=123
+      - DB_HOST=host.docker.internal
+      - DB_USER=postgres
+      - DB_PASSWORD=example
+      - DB_NAME=rutube_production
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - RAILS_MAX_THREADS=5
+    deploy:
+      replicas: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+volumes:
+  redis:
+  rutube_elastic_data:

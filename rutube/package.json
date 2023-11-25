@@ -1,0 +1,12 @@
+{
+  "name": "app",
+  "private": "true",
+  "scripts": {
+    "build:css": "sass ./app/assets/stylesheets/application.bulma.scss:./app/assets/builds/application.css ./app/assets/stylesheets/rails_admin.scss:./app/assets/builds/rails_admin.css --no-source-map --load-path=node_modules"
+  },
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "rails_admin": "3.1.2",
+    "sass": "^1.69.5"
+  }
+}
