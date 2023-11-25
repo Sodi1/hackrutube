@@ -4,3 +4,4 @@ FlashFind - поисковая система для видеохостинга 
 
 rutube - docker с Elastiс и API к Elastic
 frontend - web страница с тестированием поиска
+model - обученная модель
